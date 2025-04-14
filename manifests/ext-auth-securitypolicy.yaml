@@ -63,7 +63,7 @@ spec:
   extAuth:
     recomputeRoute: true
     http:
-      headersToBackend: ["x-current-user"]
+      headersToBackend: ["Authorization", "X-Perimeter-Stage"]
       backendRefs:
         - name: ext-auth-svc
           kind: Backend

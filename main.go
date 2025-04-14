@@ -11,7 +11,6 @@ import (
 	"net"
 	"net/http"
 	"os"
-	"strings"
 )
 
 var udsAddr = "/var/run/envoy-uds/ext-auth.sock"
@@ -53,22 +52,9 @@ func main() {
 }
 
 func Check(w http.ResponseWriter, r *http.Request, users Users) {
-	authorization := r.Header["Authorization"]
-	log.Println(r.Header)
-	log.Println(authorization)
-
-	if len(authorization) > 0 {
-		extracted := strings.Fields(authorization[0])
-		if len(extracted) == 2 && extracted[0] == "Bearer" {
-			valid, user := users.Check(extracted[1])
-			if valid {
-				w.Header().Add("x-current-user", user)
-				w.WriteHeader(http.StatusOK)
-			}
-		}
-	}
-
-	w.WriteHeader(http.StatusUnauthorized)
+	w.Header().Add("Authorization", "Bearer token-added-by-ext-auth")
+	w.Header().Add("X-Perimeter-Stage", "some-stage")
+	w.WriteHeader(http.StatusOK)
 }
 
 // Users holds a list of users.
