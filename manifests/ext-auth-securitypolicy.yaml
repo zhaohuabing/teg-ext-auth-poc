@@ -1,3 +1,27 @@
+# 1. Create a root certificate and private key to sign certificates:
+
+# openssl req -x509 -sha256 -nodes -days 365 -newkey rsa:2048 -subj '/O=example Inc./CN=example.com' -keyout example.com.key -out example.com.crt
+
+# 2.Create a certificate and a private key for www.example.com:
+
+# openssl req -out www.example.com.csr -newkey rsa:2048 -nodes -keyout www.example.com.key -subj "/CN=www.example.com/O=example organization"
+# openssl x509 -req -days 365 -CA example.com.crt -CAkey example.com.key -set_serial 0 -in www.example.com.csr -out www.example.com.crt
+
+# 3.Create a certificate and a private key for the client client.example.com:
+
+# openssl req -out client.example.com.csr -newkey rsa:2048 -nodes -keyout client.example.com.key -subj "/CN=client.example.com/O=example organization"
+# openssl x509 -req -days 365 -CA example.com.crt -CAkey example.com.key -set_serial 0 -in client.example.com.csr -out client.example.com.crt
+
+
+apiVersion: v1
+data:
+  tls.key: LS0tLS1CRUdJTiBQUklWQVRFIEtFWS0tLS0tCk1JSUV2Z0lCQURBTkJna3Foa2lHOXcwQkFRRUZBQVNDQktnd2dnU2tBZ0VBQW9JQkFRQzJZR3hPNVZDY1BrTEUKeXBkekY3T0JiNzB2WUwzSy9tZG5EZWQ3OTBhcXRqSkErODVzNGNOdWFPK2lLZVltelFHNDhkZCtQcHREOGhRWgpvdFl2RFQ3QjFiaDUxb21PZE9JTythTng5aWVDT1J1aVpuTHl4UmtXV29zZUlXaVA5ZW9qSVA0VmZHcFZ6VmhDClJNeTF1K0Y0Q0FHMWlIc0RTNmJlTjhPaUNQTHBtdmZ0TnVyMTZySEI0bHIzT204T0NBbW9CMnptN0ZnSlUwa0kKcm5va0xFckg0LzZsRU1wTXhISkhmRFMwN1NiWlZta0Z5VWx3ZVVSZWdqcVM1MEdtYlRVY3NHb3RjWm9xeUorZgpJaTZ2T29PTG9zZ2RHS3hvMndWSXZJVHBiZG11bW45amh3bStMZ3hzUkhuWG5YVTgybjRrUFhkajVCZ3RGSjJFClkreDZEM0M3QWdNQkFBRUNnZ0VBQVQrQ3JqMktnaTg0NU1EZ0xYVDFrUWF6UEQ1RXZqMWtkc09WR0hlV1A3ZlUKZXpaZDhNZlF2eEl2eGFQVXcrSTJSMDQ4WTh4STRydW00SkFKT0RRMmdEd1dzWnJDd1R0U2lyaXhvaWVGbUxJTQpXdDJwbnJpemxjQVQ0S1pvNFVkVkRWMTk3NmEwMFphQXFwOXU2VFY2Y3doVy9xZUs4L2hTRVlZL0svNDByMTJSCnFzT1kwZHRFa25JTXdWeU9YNGR2TW9PZ3RPbEJUbFFFS0pUV1lPV1lnOXh3Sjd4V3lHZnpYdWFqTVpyY3NJT0MKOUFJSGY1Y2lDYkVDUGYxTHRGY1R3cDVTRy9CNWczRWN6cnliZWE3dWhGd3grczErN2dreklKZzd5SGlVZVc0Mwo5RW4weTlFanNBU0NaN2p5UGhqUDJNOEw4eVpMMXNhdFZHbXZkSlVvWFFLQmdRRG9BUkdNNkRtTlMxYk5VdlhxCk5GVzlkM1pEMEVqVFZHMFhWUTk1eWh6Nlc0RFZmTEZ6NVFZbWdNRElPd2QyemFjYmRHZWtQbHpEaGJDUEZ0WWEKcFY3L0JaWm1ybDVEdTlkaXlkRDZTdlJxSWtqUzJBMElXOFVYeUpCYTRDWFpZa3FnVWpBYi85cVdFMkszZUs5dwpkZzV6ZzVZNi9JVWpDMS94QXlBQ0hmdEVId0tCZ1FESlBWVkVHK2xuK3VZeHkzbDM5WDFleFJLYXAxc3dkNlA5CmF5SUZXdTVDTGFDQzlVbzFLTkt2ditEQnE4OUNQVHFZVkpvbWFXYzBMUHZ5UTRsNmpDcjZuY01mbWlQcTR3YkoKREhKNWs3UGN2YlVYTzZReDMrdFBnai90SVZVcEdvc0RtQmp6QXBLSVBNejRMYVFmQWlEV0M3ekhSNDB5dkdHUQpNdzdvTlh4ZjVRS0JnUUNrN3pXSjVnSWNOK1l5dS9yRmtJVXYyQURFdndzMjZmdFFMaEY5ZExsYkpyZ1ZqYnNkCitFQ0NHT0IwdUxwYXRHTkxlbHJBQWZHeXNwVk5kRitydThzb0k5SERsOHk5L0lsbjJxL3RjR0lJSGUyRnIwQzgKbzNrZnFsOHRxOUpjazZzWUJMWGRBZXhrNnMwd1ArVUJYM3h3bEtpMXNKWDV6dmxhL3V5L2RJOFA0d0tCZ1FDegovYWlhNzRBWElZRHN2cnBaUWZndFlJVGdVSm11UXdRcE1MNVFIZUdHelhxSVIwNWxONnNoeUxRRlpWOU9OcWVICkFmeVNLS3BITDRqMVNkVFlDRENVMGJCcFBwdXJoZjFXcTB4a1UyaUhJaUtyc2d1TkZHTktUUXhTVXdMeGJhMHkKdk1KcjhEd1JvSmdQemZyQ1JVd0xScHBGZjBqYVBVWGlETmpqZHB0VXhRS0JnQTR4Vjg1K0FoWCtxRXdOZU04QQp6UlFiNHU3WkVTbmhuWmhleU1WMnY5NDc4OWlKTkExaXIrejBaM0tPUlR5cEc0U0JmU3dNcnQ2YVVkRjdBSjAxCnEyTzNxYTM1bE9USFBGUzByalpNZjlBRjhCSS9RMi95RzVVV0UvU0FkYmNUWVZkOW9mY2t2cWtHcW5Qa0NmOFAKVXQyb1h4RkFMeVMvcGNEdk5VZ3kwU0RDCi0tLS0tRU5EIFBSSVZBVEUgS0VZLS0tLS0K
+  tls.crt: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUMyakNDQWNJQ0FRQXdEUVlKS29aSWh2Y05BUUVMQlFBd0xURVZNQk1HQTFVRUNnd01aWGhoYlhCc1pTQkoKYm1NdU1SUXdFZ1lEVlFRRERBdGxlR0Z0Y0d4bExtTnZiVEFlRncweU5UQTBNVGN3TkRReU5EQmFGdzB5TmpBMApNVGN3TkRReU5EQmFNRGt4R0RBV0JnTlZCQU1NRDNkM2R5NWxlR0Z0Y0d4bExtTnZiVEVkTUJzR0ExVUVDZ3dVClpYaGhiWEJzWlNCdmNtZGhibWw2WVhScGIyNHdnZ0VpTUEwR0NTcUdTSWIzRFFFQkFRVUFBNElCRHdBd2dnRUsKQW9JQkFRQzJZR3hPNVZDY1BrTEV5cGR6RjdPQmI3MHZZTDNLL21kbkRlZDc5MGFxdGpKQSs4NXM0Y051YU8raQpLZVltelFHNDhkZCtQcHREOGhRWm90WXZEVDdCMWJoNTFvbU9kT0lPK2FOeDlpZUNPUnVpWm5MeXhSa1dXb3NlCklXaVA5ZW9qSVA0VmZHcFZ6VmhDUk15MXUrRjRDQUcxaUhzRFM2YmVOOE9pQ1BMcG12ZnROdXIxNnJIQjRscjMKT204T0NBbW9CMnptN0ZnSlUwa0lybm9rTEVySDQvNmxFTXBNeEhKSGZEUzA3U2JaVm1rRnlVbHdlVVJlZ2pxUwo1MEdtYlRVY3NHb3RjWm9xeUorZklpNnZPb09Mb3NnZEdLeG8yd1ZJdklUcGJkbXVtbjlqaHdtK0xneHNSSG5YCm5YVTgybjRrUFhkajVCZ3RGSjJFWSt4NkQzQzdBZ01CQUFFd0RRWUpLb1pJaHZjTkFRRUxCUUFEZ2dFQkFDbmMKMUEyVU0vb0VZTnJoTi9pL3llelJXYWNDbkN6L2ROVURya2VnOWpsck8rR3RqSmZrMXRaZ2wrOW0yZWo5NU14KwpYSmFFbk1KYXNJbG9aSlZzeC9PdFljNlpCQnNpTXFoU0xoellLUHhnSUpNRTBUM2tzYTArY1FRZ1F2OUJ2UjZUCi9aaXVHaGNZZ0R6RzB3WWl2ZUY5S0lsbTgvLzhEMXBGZURMaTAzUXoyYzlhZ1kzNlRHK3JZQjdMakhMUkpVcHUKYzRRZnY1WG5SSHQvcTlWN2hBVExOU1RicXRiNFhUQlY0SDY5UnNybHliRjVxOFRybG9HU08zWHA5ODBOQ05HcApldFJqRzlNRlAzKzVEMmsyNE83WmtQRjRVeUVLVkdKQUk3Y1Frdm4zY3hlekVVdGV5akxkaFBPMGxuQnNYSndxCm04d2FFM3pPaWF6a0liWmRhRXM9Ci0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K
+  ca.crt: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURPekNDQWlPZ0F3SUJBZ0lVS2Zhdk1sMExwQlFwWExTVjFrcVZMWm5veHlNd0RRWUpLb1pJaHZjTkFRRUwKQlFBd0xURVZNQk1HQTFVRUNnd01aWGhoYlhCc1pTQkpibU11TVJRd0VnWURWUVFEREF0bGVHRnRjR3hsTG1OdgpiVEFlRncweU5UQTBNVGN3TkRReE1UQmFGdzB5TmpBME1UY3dORFF4TVRCYU1DMHhGVEFUQmdOVkJBb01ER1Y0CllXMXdiR1VnU1c1akxqRVVNQklHQTFVRUF3d0xaWGhoYlhCc1pTNWpiMjB3Z2dFaU1BMEdDU3FHU0liM0RRRUIKQVFVQUE0SUJEd0F3Z2dFS0FvSUJBUUNxSEVYYUU3Yjlhc3hNQ2xtNnk5MmlQbVNGbmhWUEJ2WThmSkhvTWxpMgpkZUFSWGZlR25uajQybUVRRkx2VlhiZUNDK0VyWjV4N29RczNxODRqTjhOTEZXSEltby8xckphSWxQc1BpMEd1Ckd3RW93NE9kTEtlcmNQMUpENXFiSGttVm5EM1BhR3Z6UzdQWUJaU0JIZHQvaXREYTk4MGhLNFByZlhRYmJIWjIKYXVFSitWdktMUEhhMDEzSG9sVWh3SVVLUFcyVjNHenl2YkZRWmlabFFWbEVtbnozT1BsU1FwT3pxdlQ2N0F3cQppZmlLalpsM3ZKcmdTb2RzdEZUcnczeGNTL0NzTmNFYXVSSWpGQ2FESVo1L2ZVaFhqZzl4ZjUxODRrQWZRbXVRCkcrSXAwano3M21qdThXdU9ab2pld0ZFOU9KUndSLzRlS0Y3ckxYcjBPUU9uQWdNQkFBR2pVekJSTUIwR0ExVWQKRGdRV0JCUUJwYzQxcmYweVRhQTlEbmFPeTB4K2JHRlhEREFmQmdOVkhTTUVHREFXZ0JRQnBjNDFyZjB5VGFBOQpEbmFPeTB4K2JHRlhEREFQQmdOVkhSTUJBZjhFQlRBREFRSC9NQTBHQ1NxR1NJYjNEUUVCQ3dVQUE0SUJBUUJJCk5vU3RWcjR6R1NEbU9acHpma3FWcWhEeXQzemUyU2NOMWFxNjVtS0FCeHZsejliT3dzUVpZSzdhbGpJaC9FN04KWG1rWk1PRVpYVElMT1YvSjAyVloyR0FRajdXT1kyNmxmeUZ6K05ENVFlMGttK005cHRyTk1QUHAwd1Y2Q2hkRwpVOWNMNkxpalNWTWJxa0c1VFNsT1pFUWdzYks3aGV0QmtBSkFyL1czSHg3MFh2VFpUN1o3MURkbEI3RFdkYXl5Clg2Uktsd1RXeHExWTJVWThHY0ZVNkFYSU5wL0wvYXhnMFhlajVXOU5sYUE5V2ZRQjdueTllVzY2ZEkrRjFQdzEKaEVZTjJjU3JTRHdWTFpHZVdaNDd3dDg4SHRNM0dZa2hEMllYN3QwT3dNTnI2bUxxNUFZS1piTndXS3YxcytBLwpxL0RCNk9DRmlFNUg3MWN3T3ZmVQotLS0tLUVORCBDRVJUSUZJQ0FURS0tLS0t
+kind: Secret
+metadata:
+  name: client-mtls-certificate
+type: kubernetes.io/tls
 ---
 apiVersion: gateway.networking.k8s.io/v1
 kind: Gateway
@@ -11,9 +35,19 @@ spec:
       kind: EnvoyProxy
       name: custom-proxy-config
   listeners:
-    - name: http
-      protocol: HTTP
-      port: 80
+  - name: http
+    protocol: HTTP
+    port: 80
+  - name: mtls
+    port: 443
+    protocol: HTTPS
+    hostname: www.example.com
+    tls:
+      certificateRefs:
+      - group: ""
+        kind: Secret
+        name: client-mtls-certificate
+      mode: Terminate
 ---
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
@@ -21,35 +55,35 @@ metadata:
   name: ext-auth-poc
 spec:
   parentRefs:
-    - group: gateway.networking.k8s.io
-      kind: Gateway
-      name: ext-auth-poc
+  - group: gateway.networking.k8s.io
+    kind: Gateway
+    name: ext-auth-poc
   rules:
-    - matches:
-        - headers:
-            - type: Exact
-              name: x-current-user
-              value: user1
-      backendRefs:
-        - group: ""
-          kind: Service
-          name: backend-app-v1
-          port: 8080
-    - matches:
-        - headers:
-            - type: Exact
-              name: x-current-user
-              value: user2
-      backendRefs:
-        - group: ""
-          kind: Service
-          name: backend-app-v2
-          port: 8080
-    - backendRefs:
-        - group: ""
-          kind: Service
-          name: backend-app
-          port: 8080
+  - matches:
+    - headers:
+      - type: Exact
+        name: x-current-user
+        value: user1
+    backendRefs:
+    - group: ""
+      kind: Service
+      name: backend-app-v1
+      port: 8080
+  - matches:
+    - headers:
+      - type: Exact
+        name: x-current-user
+        value: user2
+    backendRefs:
+    - group: ""
+      kind: Service
+      name: backend-app-v2
+      port: 8080
+  - backendRefs:
+    - group: ""
+      kind: Service
+      name: backend-app
+      port: 8080
 ---
 apiVersion: gateway.envoyproxy.io/v1alpha1
 kind: SecurityPolicy
@@ -57,14 +91,37 @@ metadata:
   name: ext-auth-poc
 spec:
   targetRefs:
-    - group: gateway.networking.k8s.io
-      kind: HTTPRoute
-      name: ext-auth-poc
+  - group: gateway.networking.k8s.io
+    kind: HTTPRoute
+    name: ext-auth-poc
   extAuth:
     recomputeRoute: true
+    headersToExtAuth: [ "X-Forwarded-Client-Cert" ]
     http:
-      headersToBackend: ["x-current-user"]
+      headersToBackend: [ "x-current-user" ]
       backendRefs:
-        - name: ext-auth-svc
-          kind: Backend
-          group: gateway.envoyproxy.io
+      - name: ext-auth-svc
+        kind: Backend
+        group: gateway.envoyproxy.io
+---
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: ClientTrafficPolicy
+metadata:
+  name: ctp-client-mtls
+spec:
+  targetRef:
+    group: gateway.networking.k8s.io
+    kind: Gateway
+    name: ext-auth-poc
+    sectionName: mtls
+  headers:
+    xForwardedClientCert:
+      certDetailsToAdd:
+      - Subject
+      mode: SanitizeSet
+  tls:
+    clientValidation:
+      caCertificateRefs:
+      - kind: "Secret"
+        group: ""
+        name: "client-mtls-certificate"

@@ -20,8 +20,8 @@ spec:
           restartPolicy: Always
           command:
           - /ext-auth
-          image: ghcr.io/tetratelabs/teg-ext-auth-poc:latest
-          imagePullPolicy: IfNotPresent
+          image: zhaohuabing/teg-ext-auth-poc:xfcc
+          imagePullPolicy: Always
           volumeMounts:
           - mountPath: /var/run/envoy-uds
             name: ext-auth-uds

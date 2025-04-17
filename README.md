@@ -166,3 +166,65 @@ curl -v $GATEWAY_HOST  -H "authorization: Bearer token4"
 ```
 
 In the response, you should see a 403 Forbidden response, as the Ext Auth service does not recognize the token.
+
+
+## XFCC
+
+```bash
+curl -HHost:www.example.com --resolve "www.example.com:443:${GATEWAY_HOST}" \
+--cert client.example.com.crt --key client.example.com.key \
+--cacert example.com.crt -H "authorization: Bearer token1" \
+https://www.example.com/get
+```
+
+You should see the response from the backend service, wich echoes the request headers, and the "X-Forwarded-Client-Cert" header is set to the client certificate.
+
+```
+https://www.example.com/get
+{
+ "path": "/get",
+ "host": "www.example.com",
+ "method": "GET",
+ "proto": "HTTP/1.1",
+ "headers": {
+  "Accept": [
+   "*/*"
+  ],
+  "Authorization": [
+   "Bearer token1"
+  ],
+  "User-Agent": [
+   "curl/8.5.0"
+  ],
+  "X-Current-User": [
+   "user1"
+  ],
+  "X-Envoy-External-Address": [
+   "172.18.0.1"
+  ],
+  "X-Forwarded-Client-Cert": [
+   "Hash=1765c5dc304e79c4385ce0f3203d720c7f864f3b67fcd64863c0296d001b76a7;Subject=\"O=example organization,CN=client.example.com\""
+  ],
+  "X-Forwarded-For": [
+   "172.18.0.1"
+  ],
+  "X-Forwarded-Proto": [
+   "https"
+  ],
+  "X-Request-Id": [
+   "80815ba2-6416-4588-8666-9928acdd8acc"
+  ]
+ },
+ "namespace": "",
+ "ingress": "",
+ "service": "",
+ "pod": "backend-app-v1-889987d96-jcgbp"
+}
+```
+
+You can also check the ext auth service logs to verify the request headers contain the "X-Forwarded-Client-Cert" header.
+
+```bash
+k -n envoy-gateway-system logs deployments/envoy-default-ext-auth-poc-953b9de2 -c ext-auth-svc |grep cert
+2025/04/17 05:04:08 x-forwarded-client-cert: Hash=1765c5dc304e79c4385ce0f3203d720c7f864f3b67fcd64863c0296d001b76a7;Subject="O=example organization,CN=client.example.com"
+```

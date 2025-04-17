@@ -7,6 +7,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"net"
 	"net/http"
@@ -53,6 +54,7 @@ func main() {
 }
 
 func Check(w http.ResponseWriter, r *http.Request, users Users) {
+	checkClientCert(w, r)
 	authorization := r.Header["Authorization"]
 	log.Println(r.Header)
 	log.Println(authorization)
@@ -69,6 +71,11 @@ func Check(w http.ResponseWriter, r *http.Request, users Users) {
 	}
 
 	w.WriteHeader(http.StatusUnauthorized)
+}
+
+func checkClientCert(w http.ResponseWriter, r *http.Request) {
+	cert := r.Header.Get("x-forwarded-client-cert")
+	log.Println(fmt.Sprintf("x-forwarded-client-cert: %s", cert))
 }
 
 // Users holds a list of users.
